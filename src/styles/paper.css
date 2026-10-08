@@ -1,0 +1,49 @@
+.paper {
+  width: 794px;
+  height: 1123px;
+  padding: 64px 72px;
+  overflow: hidden;
+  background: #fff;
+  color: #111;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  box-shadow: var(--shadow-md);
+}
+
+.paper__title {
+  margin-bottom: 24px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.paper__meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.paper__body {
+  text-align: justify;
+}
+
+.paper__signature {
+  display: grid;
+  justify-items: center;
+  width: 220px;
+  margin: 64px 0 0 auto;
+}
+
+.paper__signature img,
+.paper__signature-blank {
+  width: 200px;
+  height: 66px;
+  object-fit: contain;
+}
+
+.paper__signature span {
+  width: 100%;
+  padding-top: 6px;
+  border-top: 1px solid #111;
+  text-align: center;
+}
