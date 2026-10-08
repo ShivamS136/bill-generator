@@ -7,6 +7,7 @@ export interface BillFormProps<T> {
 
 export interface BillPreviewProps<T> {
   data: T
+  onChange: (patch: Partial<T>) => void
 }
 
 export interface BillModule<T> {

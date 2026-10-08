@@ -14,8 +14,8 @@ export function formatDate(iso: string): string {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
   if (!match) return iso
   const [, y, m, d] = match
-  const date = new Date(Number(y), Number(m) - 1, Number(d))
-  return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+  const month = new Date(Number(y), Number(m) - 1, 1).toLocaleString('en-US', { month: 'short' })
+  return `${d} ${month} ${y}`
 }
 
 export function todayISO(): string {

@@ -23,7 +23,11 @@ export async function downloadPdf(root: HTMLElement, fileName: string) {
     for (const [index, page] of pages.entries()) {
       const clone = page.cloneNode(true) as HTMLElement
       host.replaceChildren(clone)
-      const canvas = await html2canvas(clone, { scale: 2, backgroundColor: '#ffffff' })
+      const canvas = await html2canvas(clone, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+        useCORS: true,
+      })
       if (index > 0) pdf.addPage()
       pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, A4_MM.width, A4_MM.height)
     }

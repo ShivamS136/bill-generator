@@ -8,6 +8,7 @@ import {
 import { SignatureField } from '../../components/form/SignatureField'
 import { Paper } from '../../components/preview/Paper'
 import { amountInWords, formatDate, formatINR, todayISO } from '../../lib/format'
+import { isImageDataUrl } from '../../lib/image'
 import { defineBill } from '../types'
 
 interface SampleData {
@@ -88,9 +89,9 @@ export const sampleBill = defineBill<SampleData>({
   ),
 
   Preview: ({ data }) => (
-    <Paper>
-      <h1 className="paper__title">Payment Receipt</h1>
-      <div className="paper__meta">
+    <Paper className="px-18 py-16 font-paper text-base leading-relaxed">
+      <h1 className="mb-6 text-center font-bold text-2xl">Payment Receipt</h1>
+      <div className="mb-6 flex justify-between">
         <span>
           <strong>Receipt No:</strong> {data.receiptNo}
         </span>
@@ -98,18 +99,20 @@ export const sampleBill = defineBill<SampleData>({
           <strong>Date:</strong> {formatDate(data.date)}
         </span>
       </div>
-      <p className="paper__body">
+      <p className="text-justify">
         Received a sum of <strong>{formatINR(data.amount)}</strong> (
         {amountInWords(data.amount || 0)}) from <strong>{data.payer || 'Payer Name'}</strong>
         {data.purpose ? ` towards ${data.purpose}` : ''}.
       </p>
-      <div className="paper__signature">
-        {data.signature ? (
-          <img src={data.signature} alt="" />
+      <div className="mt-16 ml-auto grid w-56 justify-items-center">
+        {isImageDataUrl(data.signature) ? (
+          <img className="h-16 w-48 object-contain" src={data.signature} alt="" />
         ) : (
-          <div className="paper__signature-blank" />
+          <div className="h-16 w-48" />
         )}
-        <span>{data.payee || 'Payee Name'}</span>
+        <span className="w-full border-neutral-900 border-t pt-1.5 text-center">
+          {data.payee || 'Payee Name'}
+        </span>
       </div>
     </Paper>
   ),

@@ -1,4 +1,13 @@
 import { type ReactNode, useId } from 'react'
+import { cx } from '../../lib/cx'
+import {
+  fieldClass,
+  hintClass,
+  inputClass,
+  labelClass,
+  textareaClass,
+  wideFieldClass,
+} from './styles'
 
 interface FieldShellProps {
   id: string
@@ -11,13 +20,13 @@ interface FieldShellProps {
 
 function FieldShell({ id, label, required, hint, children, wide }: FieldShellProps) {
   return (
-    <div className={wide ? 'field field--wide' : 'field'}>
-      <label className="field__label" htmlFor={id}>
+    <div className={cx(fieldClass, wide && wideFieldClass)}>
+      <label className={labelClass} htmlFor={id}>
         {label}
-        {required && <span className="field__required"> *</span>}
+        {required && <span className="text-danger"> *</span>}
       </label>
       {children}
-      {hint && <p className="field__hint">{hint}</p>}
+      {hint && <p className={hintClass}>{hint}</p>}
     </div>
   )
 }
@@ -53,7 +62,7 @@ export function TextField({
     <FieldShell id={id} label={label} required={required} hint={hint} wide={wide}>
       <input
         id={id}
-        className="input"
+        className={inputClass}
         value={value}
         required={required}
         onChange={(event) => onChange(event.target.value)}
@@ -87,7 +96,7 @@ export function TextAreaField({
     <FieldShell id={id} label={label} required={required} hint={hint} wide={wide}>
       <textarea
         id={id}
-        className="input input--textarea"
+        className={textareaClass}
         value={value}
         required={required}
         onChange={(event) => onChange(event.target.value)}
@@ -115,7 +124,7 @@ export function SelectField({
     <FieldShell id={id} label={label} required={required} hint={hint} wide={wide}>
       <select
         id={id}
-        className="input input--select"
+        className={inputClass}
         value={value}
         required={required}
         onChange={(event) => onChange(event.target.value)}
@@ -130,14 +139,55 @@ export function SelectField({
   )
 }
 
+interface RangeFieldProps {
+  label: string
+  value: number
+  onChange: (value: number) => void
+  min: number
+  max: number
+  step?: number
+  unit?: string
+  wide?: boolean
+}
+
+export function RangeField({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  step = 1,
+  unit = '',
+  wide,
+}: RangeFieldProps) {
+  const id = useId()
+  return (
+    <FieldShell id={id} label={`${label}: ${value}${unit}`} wide={wide}>
+      <input
+        id={id}
+        type="range"
+        className="h-11 w-full cursor-pointer accent-brand"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        aria-valuetext={`${value}${unit}`}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+    </FieldShell>
+  )
+}
+
 export function FieldGrid({ children }: { children: ReactNode }) {
-  return <div className="field-grid">{children}</div>
+  return <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">{children}</div>
 }
 
 export function FormSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <fieldset className="form-section">
-      <legend className="form-section__title">{title}</legend>
+    <fieldset className="m-0 mb-7 min-w-0 border-0 p-0 last:mb-0">
+      <legend className="mb-4 flex items-center gap-2.5 p-0 font-semibold text-xs uppercase tracking-wider before:h-4 before:w-1 before:rounded-sm before:bg-brand before:content-['']">
+        {title}
+      </legend>
       {children}
     </fieldset>
   )

@@ -1,4 +1,8 @@
 import { type PointerEvent, useEffect, useId, useRef } from 'react'
+import { cx } from '../../lib/cx'
+import { isImageDataUrl } from '../../lib/image'
+import { buttonClass } from '../ui'
+import { actionsClass, fieldClass, hintClass, labelClass, wideFieldClass } from './styles'
 
 const CANVAS_WIDTH = 600
 const CANVAS_HEIGHT = 200
@@ -66,6 +70,7 @@ export function SignatureField({ label, value, onChange }: SignatureFieldProps) 
   }
 
   function drawImage(src: string) {
+    if (!isImageDataUrl(src)) return
     const image = new Image()
     image.onload = () => {
       const ctx = getContext()
@@ -96,13 +101,13 @@ export function SignatureField({ label, value, onChange }: SignatureFieldProps) 
   }
 
   return (
-    <div className="field field--wide">
-      <span className="field__label" id={`${id}-label`}>
+    <div className={cx(fieldClass, wideFieldClass)}>
+      <span className={labelClass} id={`${id}-label`}>
         {label}
       </span>
       <canvas
         ref={canvasRef}
-        className="signature__canvas"
+        className="aspect-3/1 w-full cursor-crosshair touch-none rounded-lg border border-line-strong border-dashed bg-surface"
         width={CANVAS_WIDTH}
         height={CANVAS_HEIGHT}
         aria-labelledby={`${id}-label`}
@@ -111,9 +116,9 @@ export function SignatureField({ label, value, onChange }: SignatureFieldProps) 
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       />
-      <div className="signature__actions">
-        <span className="field__hint">Draw above or upload an image</span>
-        <label className="button button--ghost">
+      <div className={actionsClass}>
+        <span className={cx(hintClass, 'mr-auto')}>Draw above or upload an image</span>
+        <label className={buttonClass('ghost')}>
           Upload
           <input
             type="file"
@@ -127,7 +132,7 @@ export function SignatureField({ label, value, onChange }: SignatureFieldProps) 
         </label>
         <button
           type="button"
-          className="button button--ghost"
+          className={buttonClass('ghost')}
           onClick={handleClear}
           disabled={!value}
         >
