@@ -14,3 +14,13 @@ export function writeJson(key: string, value: unknown) {
     localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value))
   } catch {}
 }
+
+export function clearStoredData(): number {
+  try {
+    const keys = Object.keys(localStorage).filter((key) => key.startsWith(STORAGE_PREFIX))
+    for (const key of keys) localStorage.removeItem(key)
+    return keys.length
+  } catch {
+    return 0
+  }
+}

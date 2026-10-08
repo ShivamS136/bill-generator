@@ -18,3 +18,6 @@ export function buttonClass(variant: keyof typeof buttonVariants): string {
     buttonVariants[variant],
   )
 }
+
+export const linkClass =
+  'font-medium text-brand underline underline-offset-2 hover:text-brand-hover'

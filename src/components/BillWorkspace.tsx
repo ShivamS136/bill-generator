@@ -4,7 +4,7 @@ import { usePdfDownload } from '../hooks/usePdfDownload'
 import { usePersistentState } from '../hooks/usePersistentState'
 import { Panel } from './Panel'
 import { PreviewPane } from './preview/PreviewPane'
-import { buttonClass } from './ui'
+import { buttonClass, linkClass } from './ui'
 
 export function BillWorkspace({ bill }: { bill: BillEntry }) {
   if (!bill.module) return <ComingSoon bill={bill} />
@@ -23,7 +23,21 @@ function ActiveBill<T>({ bill, module }: { bill: BillEntry; module: BillModule<T
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
-      <Panel title={`${bill.emoji} ${bill.name}`} footer={downloadButton}>
+      <Panel
+        title={`${bill.emoji} ${bill.name}`}
+        footer={
+          <>
+            <p className="mr-auto text-ink-muted text-xs">
+              By downloading, you agree to the{' '}
+              <a className={linkClass} href="#/terms">
+                Terms of Use
+              </a>
+              .
+            </p>
+            {downloadButton}
+          </>
+        }
+      >
         <Form data={data} onChange={handleChange} />
       </Panel>
       <div className="lg:sticky lg:top-22 lg:h-sticky-preview">
