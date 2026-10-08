@@ -14,9 +14,9 @@ npm run dev      # http://localhost:5173
 
 | Script | What it does |
 | --- | --- |
-| `npm run dev` | Dev server with `.env.development` |
-| `npm run build` | Production build with `.env.production` (GitHub Pages, base `/bill-generator/`) |
-| `npm run build:dev` | Build with `.env.development` (base `/`) |
+| `npm run dev` | Dev server (mode `development`) |
+| `npm run build` | Production build (mode `production`) |
+| `npm run build:dev` | Build in mode `development` |
 | `npm run preview` / `preview:dev` | Serve the production / dev build locally |
 | `npm run typecheck` | `tsc -b` |
 | `npm run check` / `check:fix` | Biome lint + format check / autofix |
@@ -24,14 +24,13 @@ npm run dev      # http://localhost:5173
 
 ## Environments
 
-| File | Used by |
-| --- | --- |
-| `.env` (git-ignored) | Personal per-bill defaults such as `VITE_DRIVER_SALARY_*`; copy from `.env.example` |
-| `.env.development` | `dev`, `build:dev`; app name, repo, enables the 🧪 Sample bill |
-| `.env.production` | `build`; app name, repo, sample bill excluded from the bundle |
-| `.env.local` (git-ignored) | Personal overrides |
+All env files are git-ignored except `.env.example`, which lists every key (all optional). Copy it to `.env` and fill in your own defaults; use `.env.development` / `.env.production` for mode-specific overrides such as `VITE_BASE_PATH`.
 
-The Pages build reads the `VITE_DRIVER_SALARY_*` defaults from GitHub repository variables (**Settings → Secrets and variables → Actions → Variables**). Unset variables leave those fields empty.
+The mode decides the rest: `dev` and `build:dev` (mode `development`) show the 🧪 Sample bill and an environment badge; `build` (mode `production`) leaves the sample out of the bundle.
+
+Personal signature images go in `public/signatures/` (git-ignored) and are referenced from `.env`, e.g. `VITE_DRIVER_SALARY_USER_SIGNATURE=signatures/user-signature.png`.
+
+The Pages build sets `VITE_BASE_PATH` and `VITE_GITHUB_REPO` from the repository, and reads the `VITE_DRIVER_SALARY_*` defaults from GitHub repository variables (**Settings → Secrets and variables → Actions → Variables**). Signatures there must be image URLs or `data:image/png;base64,…` URLs since `public/signatures/` isn't in git. Unset variables leave those fields empty.
 
 ## Styling
 

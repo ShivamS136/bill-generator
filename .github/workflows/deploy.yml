@@ -27,6 +27,8 @@ jobs:
       - run: npm run check
       - run: npm run build
         env:
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/
+          VITE_GITHUB_REPO: ${{ github.repository }}
           VITE_DRIVER_SALARY_DRIVER_NAME: ${{ vars.VITE_DRIVER_SALARY_DRIVER_NAME }}
           VITE_DRIVER_SALARY_EMPLOYEE_NAME: ${{ vars.VITE_DRIVER_SALARY_EMPLOYEE_NAME }}
           VITE_DRIVER_SALARY_VEHICLE_NUMBER: ${{ vars.VITE_DRIVER_SALARY_VEHICLE_NUMBER }}

@@ -11,9 +11,14 @@ node_modules
 dist
 dist-ssr
 
-# Env: .env holds personal defaults; .env.example documents it
-.env
 *.local
+
+# Env files hold personal defaults; .env.example documents the keys
+.env*
+!.env.example
+
+# Personal signature images, local only
+public/signatures/
 
 # Editor directories and files
 .vscode/*

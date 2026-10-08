@@ -1,6 +1,6 @@
 export const env = {
-  appName: import.meta.env.VITE_APP_NAME,
-  appEnv: import.meta.env.VITE_APP_ENV,
-  isProduction: import.meta.env.VITE_APP_ENV === 'production',
-  githubRepo: import.meta.env.VITE_GITHUB_REPO,
+  appName: 'Bill Generator',
+  appEnv: import.meta.env.MODE,
+  isProduction: import.meta.env.MODE === 'production',
+  githubRepo: import.meta.env.VITE_GITHUB_REPO || 'ShivamS136/bill-generator',
 } as const

@@ -23,7 +23,7 @@ const catalog: BillEntry[] = [
 
 // Inlined (not via env.ts) so the sample is tree-shaken out of production builds.
 const devOnly: BillEntry[] =
-  import.meta.env.VITE_ENABLE_SAMPLE_BILL === 'true'
+  import.meta.env.MODE === 'development'
     ? [{ id: 'sample', name: 'Sample (dev)', emoji: '🧪', module: sampleBill }]
     : []
 
