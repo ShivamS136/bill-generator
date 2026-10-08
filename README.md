@@ -26,10 +26,12 @@ npm run dev      # http://localhost:5173
 
 | File | Used by |
 | --- | --- |
-| `.env` | Shared defaults (app name, GitHub repo, per-bill field defaults such as `VITE_DRIVER_SALARY_*`) |
-| `.env.development` | `dev`, `build:dev`; enables the 🧪 Sample bill |
-| `.env.production` | `build`; sample bill is excluded from the bundle |
+| `.env` (git-ignored) | Personal per-bill defaults such as `VITE_DRIVER_SALARY_*`; copy from `.env.example` |
+| `.env.development` | `dev`, `build:dev`; app name, repo, enables the 🧪 Sample bill |
+| `.env.production` | `build`; app name, repo, sample bill excluded from the bundle |
 | `.env.local` (git-ignored) | Personal overrides |
+
+The Pages build reads the `VITE_DRIVER_SALARY_*` defaults from GitHub repository variables (**Settings → Secrets and variables → Actions → Variables**). Unset variables leave those fields empty.
 
 ## Styling
 
