@@ -4,13 +4,15 @@ import { readJson, writeJson } from '../lib/storage'
 export function usePersistentState<T>(
   key: string,
   initial: () => T,
+  normalize: (value: T) => T = (value) => value,
 ): [T, Dispatch<SetStateAction<T>>] {
   const [state, setState] = useState<T>(() => {
     const fallback = initial()
     const stored = readJson<T>(key)
     if (stored === undefined) return fallback
-    if (isPlainObject(fallback) && isPlainObject(stored)) return { ...fallback, ...stored }
-    return stored
+    if (isPlainObject(fallback) && isPlainObject(stored))
+      return normalize({ ...fallback, ...stored })
+    return normalize(stored)
   })
 
   useEffect(() => {

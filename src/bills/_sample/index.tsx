@@ -5,10 +5,16 @@ import {
   TextAreaField,
   TextField,
 } from '../../components/form/fields'
-import { SignatureField } from '../../components/form/SignatureField'
+import { SignatureInput } from '../../components/form/SignatureInput'
 import { Paper } from '../../components/preview/Paper'
+import { SignatureMark } from '../../components/signature/SignatureMark'
 import { amountInWords, formatDate, formatINR, todayISO } from '../../lib/format'
-import { isImageDataUrl } from '../../lib/image'
+import {
+  isSignatureEmpty,
+  parseSignature,
+  type Signature,
+  textSignature,
+} from '../../lib/signature'
 import { defineBill } from '../types'
 
 interface SampleData {
@@ -18,8 +24,10 @@ interface SampleData {
   payee: string
   amount: string
   purpose: string
-  signature: string
+  signature: Signature
 }
+
+const defaultSignature = (payee: string) => textSignature(payee)
 
 export const sampleBill = defineBill<SampleData>({
   initialData: () => ({
@@ -29,7 +37,12 @@ export const sampleBill = defineBill<SampleData>({
     payee: '',
     amount: '',
     purpose: '',
-    signature: '',
+    signature: defaultSignature(''),
+  }),
+
+  normalize: (data) => ({
+    ...data,
+    signature: parseSignature(data.signature, defaultSignature(data.payee)),
   }),
 
   fileName: (data) => `sample-receipt-${data.receiptNo || 'draft'}`,
@@ -79,11 +92,14 @@ export const sampleBill = defineBill<SampleData>({
         </FieldGrid>
       </FormSection>
       <FormSection title="Signature">
-        <SignatureField
-          label="Payee signature"
-          value={data.signature}
-          onChange={(signature) => onChange({ signature })}
-        />
+        <FieldGrid>
+          <SignatureInput
+            label="Payee signature"
+            value={data.signature}
+            defaultText={data.payee}
+            onChange={(signature) => onChange({ signature })}
+          />
+        </FieldGrid>
       </FormSection>
     </>
   ),
@@ -105,11 +121,16 @@ export const sampleBill = defineBill<SampleData>({
         {data.purpose ? ` towards ${data.purpose}` : ''}.
       </p>
       <div className="mt-16 ml-auto grid w-56 justify-items-center">
-        {isImageDataUrl(data.signature) ? (
-          <img className="h-16 w-48 object-contain" src={data.signature} alt="" />
-        ) : (
-          <div className="h-16 w-48" />
-        )}
+        <div className="flex h-16 w-48 items-end justify-center">
+          {!isSignatureEmpty(data.signature) && (
+            <SignatureMark
+              value={data.signature}
+              alt="Payee signature"
+              textClassName="text-3xl"
+              imageClassName="max-h-16 max-w-48"
+            />
+          )}
+        </div>
         <span className="w-full border-neutral-900 border-t pt-1.5 text-center">
           {data.payee || 'Payee Name'}
         </span>

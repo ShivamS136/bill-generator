@@ -28,9 +28,7 @@ All env files are git-ignored except `.env.example`, which lists every key (all 
 
 The mode decides the rest: `dev` and `build:dev` (mode `development`) show the 🧪 Sample bill and an environment badge; `build` (mode `production`) leaves the sample out of the bundle.
 
-Personal signature images go in `public/signatures/` (git-ignored) and are referenced from `.env`, e.g. `VITE_DRIVER_SALARY_USER_SIGNATURE=signatures/user-signature.png`.
-
-The Pages build sets `VITE_BASE_PATH` and `VITE_GITHUB_REPO` from the repository, and reads the `VITE_DRIVER_SALARY_*` defaults from GitHub repository variables (**Settings → Secrets and variables → Actions → Variables**). Signatures there must be image URLs or `data:image/png;base64,…` URLs since `public/signatures/` isn't in git. Unset variables leave those fields empty.
+The Pages build sets `VITE_BASE_PATH` and `VITE_GITHUB_REPO` from the repository, and reads the `VITE_DRIVER_SALARY_*` defaults from GitHub repository variables (**Settings → Secrets and variables → Actions → Variables**). Unset variables leave those fields empty.
 
 ## Styling
 
@@ -42,9 +40,10 @@ Inside a `<Paper>`, avoid Tailwind's `translate-*`/`rotate-*`/`scale-*` utilitie
 
 1. Create `src/bills/<bill-id>/index.tsx` exporting `defineBill<YourData>({ initialData, Form, Preview, fileName })`.
    `src/bills/_sample/index.tsx` is a working reference.
-2. Build the form from `src/components/form` (`TextField`, `AmountField`, `SelectField`, `TextAreaField`, `SignatureField`, `ImageSourceField`, `FieldGrid`, `FormSection`).
+2. Build the form from `src/components/form` (`TextField`, `AmountField`, `SelectField`, `TextAreaField`, `SignatureInput`, `FieldGrid`, `FormSection`).
 3. Render the preview inside one or more `<Paper>` sheets — each sheet is one A4 page in the PDF.
-   Use `DraggableImage` for signatures that should be movable on the preview; `Preview` gets `onChange` to store their placement.
+   Render signatures with `SignatureMark` inside `Draggable` to make them movable, resizable and rotatable; `Preview` gets `onChange` to store their placement.
+   Add `normalize` to validate stored data (e.g. `parseSignature`) when the saved shape may be outdated.
 4. Attach it in `src/bills/registry.ts`: `{ id: '<bill-id>', name, emoji, module: yourBill }`.
 
 Bills without a `module` show a "coming soon" state. Routes are hash based (`#/fuel-bill`) so deep links work on GitHub Pages.

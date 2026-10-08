@@ -5,23 +5,24 @@ import {
   AmountField,
   FieldGrid,
   FormSection,
-  RangeField,
   SelectField,
   TextField,
 } from '../../components/form/fields'
-import { ImageSourceField } from '../../components/form/ImageSourceField'
+import { SignatureInput } from '../../components/form/SignatureInput'
 import { actionsClass, hintClass, wideFieldClass } from '../../components/form/styles'
 import {
-  DraggableImage,
+  Draggable,
+  type Jitter,
   ORIGIN,
   type Placement,
+  parsePlacement,
   randomPlacement,
-} from '../../components/preview/DraggableImage'
+} from '../../components/preview/Draggable'
 import { Paper } from '../../components/preview/Paper'
+import { SignatureMark } from '../../components/signature/SignatureMark'
 import { buttonClass } from '../../components/ui'
 import { cx } from '../../lib/cx'
 import { formatDate, formatINR } from '../../lib/format'
-import { isSafeImageSrc, publicAssetUrl } from '../../lib/image'
 import {
   formatMonth,
   lastDayOfMonth,
@@ -30,6 +31,13 @@ import {
   recentYears,
   shiftMonth,
 } from '../../lib/month'
+import {
+  initials,
+  isSignatureEmpty,
+  parseSignature,
+  type Signature,
+  textSignature,
+} from '../../lib/signature'
 import { defineBill } from '../types'
 import revenueStamp from './revenue-stamp.jpg'
 
@@ -41,24 +49,22 @@ interface DriverSalaryData {
   receiptDate: string
   amount: string
   fileName: string
-  userSignature: string
-  driverSignature: string
+  userSignature: Signature
+  driverSignature: Signature
   userSignaturePlacement: Placement
   driverSignaturePlacement: Placement
 }
 
 const env = import.meta.env
 
-const defaultUserSignature = publicAssetUrl(env.VITE_DRIVER_SALARY_USER_SIGNATURE ?? '')
-const defaultDriverSignature = publicAssetUrl(env.VITE_DRIVER_SALARY_DRIVER_SIGNATURE ?? '')
+const defaultUserSignature = (employeeName: string) => textSignature(employeeName)
+const defaultDriverSignature = (driverName: string) => textSignature(initials(driverName))
 
 const titleClass = 'mb-4 text-center font-bold font-montserrat text-2xl leading-snug'
 const rowsClass = 'grid gap-2'
 
-const MAX_ROTATION = 20
-
-const USER_SIGNATURE_JITTER: Placement = { x: 40, y: 12, rotate: 5 }
-const DRIVER_SIGNATURE_JITTER: Placement = { x: 20, y: 20, rotate: 10 }
+const USER_SIGNATURE_JITTER: Jitter = { x: 40, y: 12, rotate: 5 }
+const DRIVER_SIGNATURE_JITTER: Jitter = { x: 20, y: 20, rotate: 10 }
 
 const GENERATED_FILE_NAME = /^driver-salary-[a-z]+-\d{2}\.pdf$/i
 
@@ -76,28 +82,33 @@ function salaryMonthPatch(salaryMonth: string): Partial<DriverSalaryData> {
   return { salaryMonth, receiptDate: lastDayOfMonth(salaryMonth), fileName: '' }
 }
 
-function signatureSrc(value: string): string | undefined {
-  const src = value.trim()
-  return isSafeImageSrc(src) ? src : undefined
-}
-
 export const driverSalaryBill = defineBill<DriverSalaryData>({
   initialData: () => {
     const salaryMonth = shiftMonth(monthKey(new Date()), -1)
+    const driverName = env.VITE_DRIVER_SALARY_DRIVER_NAME ?? ''
+    const employeeName = env.VITE_DRIVER_SALARY_EMPLOYEE_NAME ?? ''
     return {
-      driverName: env.VITE_DRIVER_SALARY_DRIVER_NAME ?? '',
-      employeeName: env.VITE_DRIVER_SALARY_EMPLOYEE_NAME ?? '',
+      driverName,
+      employeeName,
       vehicleNumber: env.VITE_DRIVER_SALARY_VEHICLE_NUMBER ?? '',
       salaryMonth,
       receiptDate: lastDayOfMonth(salaryMonth),
       amount: env.VITE_DRIVER_SALARY_AMOUNT ?? '',
       fileName: '',
-      userSignature: defaultUserSignature,
-      driverSignature: defaultDriverSignature,
+      userSignature: defaultUserSignature(employeeName),
+      driverSignature: defaultDriverSignature(driverName),
       userSignaturePlacement: ORIGIN,
       driverSignaturePlacement: ORIGIN,
     }
   },
+
+  normalize: (data) => ({
+    ...data,
+    userSignature: parseSignature(data.userSignature, defaultUserSignature(data.employeeName)),
+    driverSignature: parseSignature(data.driverSignature, defaultDriverSignature(data.driverName)),
+    userSignaturePlacement: parsePlacement(data.userSignaturePlacement),
+    driverSignaturePlacement: parsePlacement(data.driverSignaturePlacement),
+  }),
 
   fileName: (data) => resolveFileName(data).replace(/\.pdf$/i, ''),
 
@@ -160,50 +171,36 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
         </FormSection>
         <FormSection title="Signatures">
           <FieldGrid>
-            <ImageSourceField
+            <SignatureInput
               label="Your signature"
               value={data.userSignature}
-              defaultValue={defaultUserSignature}
+              defaultText={data.employeeName}
               onChange={(userSignature) => onChange({ userSignature })}
             />
-            <ImageSourceField
+            <SignatureInput
               label="Driver signature"
               value={data.driverSignature}
-              defaultValue={defaultDriverSignature}
+              defaultText={initials(data.driverName)}
               onChange={(driverSignature) => onChange({ driverSignature })}
-            />
-            <RangeField
-              label="Your signature rotation"
-              unit="°"
-              min={-MAX_ROTATION}
-              max={MAX_ROTATION}
-              value={data.userSignaturePlacement.rotate}
-              onChange={(rotate) =>
-                onChange({ userSignaturePlacement: { ...data.userSignaturePlacement, rotate } })
-              }
-            />
-            <RangeField
-              label="Driver signature rotation"
-              unit="°"
-              min={-MAX_ROTATION}
-              max={MAX_ROTATION}
-              value={data.driverSignaturePlacement.rotate}
-              onChange={(rotate) =>
-                onChange({ driverSignaturePlacement: { ...data.driverSignaturePlacement, rotate } })
-              }
             />
             <div className={wideFieldClass}>
               <div className={actionsClass}>
                 <span className={cx(hintClass, 'mr-auto')}>
-                  Drag the signatures on the preview to move them
+                  Select a signature on the preview to move, resize or rotate it
                 </span>
                 <button
                   type="button"
                   className={buttonClass('ghost')}
                   onClick={() =>
                     onChange({
-                      userSignaturePlacement: randomPlacement(USER_SIGNATURE_JITTER),
-                      driverSignaturePlacement: randomPlacement(DRIVER_SIGNATURE_JITTER),
+                      userSignaturePlacement: randomPlacement(
+                        USER_SIGNATURE_JITTER,
+                        data.userSignaturePlacement.scale,
+                      ),
+                      driverSignaturePlacement: randomPlacement(
+                        DRIVER_SIGNATURE_JITTER,
+                        data.driverSignaturePlacement.scale,
+                      ),
                     })
                   }
                 >
@@ -232,8 +229,6 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
     const amount = formatINR(data.amount)
     const month = formatMonth(data.salaryMonth, 'long')
     const receiptDate = formatDate(data.receiptDate)
-    const userSignature = signatureSrc(data.userSignature)
-    const driverSignature = signatureSrc(data.driverSignature)
 
     return (
       <Paper className="px-20 py-20 font-nunito text-neutral-900 text-xl leading-relaxed before:pointer-events-none before:absolute before:inset-4 before:border-3 before:border-neutral-900 before:content-['']">
@@ -254,14 +249,18 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
               <strong>Date:</strong> {receiptDate}
             </p>
           </div>
-          {userSignature && (
-            <DraggableImage
-              imageClassName="max-h-16 max-w-52"
-              src={userSignature}
-              alt="Employee signature"
+          {!isSignatureEmpty(data.userSignature) && (
+            <Draggable
               placement={data.userSignaturePlacement}
               onPlacementChange={(userSignaturePlacement) => onChange({ userSignaturePlacement })}
-            />
+            >
+              <SignatureMark
+                value={data.userSignature}
+                alt="Employee signature"
+                textClassName="text-4xl"
+                imageClassName="max-h-16 max-w-52"
+              />
+            </Draggable>
           )}
         </div>
 
@@ -290,17 +289,21 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
         <h3 className="mt-6 mb-2 font-bold font-montserrat text-xl leading-snug">Revenue Stamp</h3>
         <div className="relative w-28">
           <img className="block w-28" src={revenueStamp} alt="Revenue stamp" />
-          {driverSignature && (
-            <DraggableImage
+          {!isSignatureEmpty(data.driverSignature) && (
+            <Draggable
               className="absolute top-12 left-12"
-              imageClassName="max-h-14 max-w-24"
-              src={driverSignature}
-              alt="Driver signature"
               placement={data.driverSignaturePlacement}
               onPlacementChange={(driverSignaturePlacement) =>
                 onChange({ driverSignaturePlacement })
               }
-            />
+            >
+              <SignatureMark
+                value={data.driverSignature}
+                alt="Driver signature"
+                textClassName="text-3xl"
+                imageClassName="max-h-16 max-w-40"
+              />
+            </Draggable>
           )}
         </div>
       </Paper>

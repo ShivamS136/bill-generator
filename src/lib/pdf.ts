@@ -1,4 +1,5 @@
 export const PDF_PAGE_ATTR = 'data-pdf-page'
+export const PDF_IGNORE_ATTR = 'data-pdf-ignore'
 
 const A4_MM = { width: 210, height: 297 }
 
@@ -22,6 +23,7 @@ export async function downloadPdf(root: HTMLElement, fileName: string) {
 
     for (const [index, page] of pages.entries()) {
       const clone = page.cloneNode(true) as HTMLElement
+      for (const element of clone.querySelectorAll(`[${PDF_IGNORE_ATTR}]`)) element.remove()
       host.replaceChildren(clone)
       const canvas = await html2canvas(clone, {
         scale: 2,

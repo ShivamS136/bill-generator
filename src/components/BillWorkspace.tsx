@@ -12,8 +12,8 @@ export function BillWorkspace({ bill }: { bill: BillEntry }) {
 }
 
 function ActiveBill<T>({ bill, module }: { bill: BillEntry; module: BillModule<T> }) {
-  const { Form, Preview, initialData, fileName } = module
-  const [data, setData] = usePersistentState(`bill:${bill.id}`, initialData)
+  const { Form, Preview, initialData, fileName, normalize } = module
+  const [data, setData] = usePersistentState(`bill:${bill.id}`, initialData, normalize)
   const handleChange = useCallback(
     (patch: Partial<T>) => setData((prev) => ({ ...prev, ...patch })),
     [setData],

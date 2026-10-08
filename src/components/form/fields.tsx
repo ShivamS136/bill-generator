@@ -139,45 +139,6 @@ export function SelectField({
   )
 }
 
-interface RangeFieldProps {
-  label: string
-  value: number
-  onChange: (value: number) => void
-  min: number
-  max: number
-  step?: number
-  unit?: string
-  wide?: boolean
-}
-
-export function RangeField({
-  label,
-  value,
-  onChange,
-  min,
-  max,
-  step = 1,
-  unit = '',
-  wide,
-}: RangeFieldProps) {
-  const id = useId()
-  return (
-    <FieldShell id={id} label={`${label}: ${value}${unit}`} wide={wide}>
-      <input
-        id={id}
-        type="range"
-        className="h-11 w-full cursor-pointer accent-brand"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        aria-valuetext={`${value}${unit}`}
-        onChange={(event) => onChange(Number(event.target.value))}
-      />
-    </FieldShell>
-  )
-}
-
 export function FieldGrid({ children }: { children: ReactNode }) {
   return <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">{children}</div>
 }

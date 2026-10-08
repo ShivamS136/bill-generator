@@ -6,6 +6,8 @@ const buttonVariants = {
   primary:
     'h-9 border-transparent bg-brand px-4 text-sm font-semibold text-white hover:not-disabled:bg-brand-hover',
   dark: 'h-9 border-transparent bg-neutral-900 px-3 text-sm font-semibold text-white hover:bg-neutral-700',
+  outline:
+    'h-10 border-brand bg-surface px-4 text-sm font-semibold text-brand hover:not-disabled:bg-brand-soft',
   ghost:
     'h-8 border-line-strong bg-surface px-3 text-sm font-medium text-ink hover:not-disabled:bg-surface-muted',
 }

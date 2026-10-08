@@ -15,6 +15,7 @@ export interface BillModule<T> {
   Form: ComponentType<BillFormProps<T>>
   Preview: ComponentType<BillPreviewProps<T>>
   fileName?: (data: T) => string
+  normalize?: (data: T) => T
 }
 
 export interface BillMeta {
