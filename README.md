@@ -32,7 +32,7 @@ The Pages build sets `VITE_BASE_PATH` and `VITE_GITHUB_REPO` from the repository
 
 ## Styling
 
-Tailwind CSS v4 via `@tailwindcss/vite`. Theme tokens (colors, fonts, shadows) live in `src/styles/index.css` under `@theme`; shared class strings are in `src/components/ui.ts` and `src/components/form/styles.ts`. Biome sorts classes (`useSortedClasses`, also inside `cx(...)`).
+Tailwind CSS v4 via `@tailwindcss/vite`. Theme tokens (colours, fonts, shadows) live in `src/styles/index.css` under `@theme`; shared class strings are in `src/components/ui.ts` and `src/components/form/styles.ts`. Biome sorts classes (`useSortedClasses`, also inside `cx(...)`).
 
 Inside a `<Paper>`, avoid Tailwind's `translate-*`/`rotate-*`/`scale-*` utilities — they use individual transform properties that the PDF renderer ignores; use an inline `transform` instead.
 

@@ -44,6 +44,7 @@ import revenueStamp from './revenue-stamp.jpg'
 interface DriverSalaryData {
   driverName: string
   employeeName: string
+  licenceNumber: string
   vehicleNumber: string
   salaryMonth: string
   receiptDate: string
@@ -90,6 +91,7 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
     return {
       driverName,
       employeeName,
+      licenceNumber: env.VITE_DRIVER_SALARY_LICENCE_NUMBER ?? '',
       vehicleNumber: env.VITE_DRIVER_SALARY_VEHICLE_NUMBER ?? '',
       salaryMonth,
       receiptDate: lastDayOfMonth(salaryMonth),
@@ -156,6 +158,12 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
               onChange={(driverName) => onChange({ driverName })}
             />
             <TextField
+              label="Driver's licence number"
+              placeholder="Optional"
+              value={data.licenceNumber}
+              onChange={(licenceNumber) => onChange({ licenceNumber })}
+            />
+            <TextField
               label="Vehicle number"
               required
               value={data.vehicleNumber}
@@ -204,7 +212,7 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
                     })
                   }
                 >
-                  Randomize
+                  Randomise
                 </button>
               </div>
             </div>
@@ -236,7 +244,7 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
         <p className="text-justify">
           This is to certify that I have paid <strong>{amount}</strong> to driver, Mr.{' '}
           <strong>{data.driverName}</strong> for the month of <strong>{month}</strong> (Acknowledged
-          receipt enclosed). I also declare that the driver is exclusively utilized for official
+          receipt enclosed). I also declare that the driver is exclusively utilised for official
           purpose only. Please reimburse the above amount. I further declare that what is stated
           above is correct and true.
         </p>
@@ -277,6 +285,11 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
           <p>
             <strong>Name of Driver:</strong> {data.driverName}
           </p>
+          {data.licenceNumber.trim() && (
+            <p>
+              <strong>Driver's Licence No:</strong> {data.licenceNumber}
+            </p>
+          )}
           <p>
             <strong>Vehicle No:</strong> {data.vehicleNumber}
           </p>

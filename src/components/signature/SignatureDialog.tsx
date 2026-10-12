@@ -339,7 +339,7 @@ function ColorPicker({ value, onChange }: { value: string; onChange: (color: str
   const name = useId()
   return (
     <fieldset className="m-0 flex items-center gap-3 border-0 p-0">
-      <legend className={cx(labelClass, 'float-left mr-1 p-0')}>Color</legend>
+      <legend className={cx(labelClass, 'float-left mr-1 p-0')}>Colour</legend>
       {SIGNATURE_COLORS.map((color) => (
         <label key={color.value} className="cursor-pointer">
           <input
