@@ -3,6 +3,7 @@ import { type DragEvent, useId, useState } from 'react'
 import { cx } from '../../lib/cx'
 import { isSafeImageSrc, readFileAsDataUrl } from '../../lib/image'
 import {
+  hasSignatureContent,
   type ImageSource,
   SIGNATURE_COLORS,
   SIGNATURE_FONTS,
@@ -47,7 +48,9 @@ export function SignatureDialog({
 
   const [mode, setMode] = useState<Mode>(value.kind === 'text' ? 'text' : value.source)
   const [text, setText] = useState<TextSignature>(
-    value.kind === 'text' ? value : textSignature(defaultText),
+    value.kind === 'text' && hasSignatureContent(value)
+      ? textSignature(value.text, value.font, value.color)
+      : textSignature(defaultText),
   )
   const [strokes, setStrokes] = useState<Stroke[]>([])
   const [drawColor, setDrawColor] = useState<string>(SIGNATURE_COLORS[0].value)

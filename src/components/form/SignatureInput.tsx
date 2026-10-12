@@ -1,7 +1,7 @@
-import { Pencil, Signature as SignatureIcon } from 'lucide-react'
+import { Eye, EyeOff, Pencil, Signature as SignatureIcon } from 'lucide-react'
 import { useState } from 'react'
 import { cx } from '../../lib/cx'
-import { isSignatureEmpty, type Signature } from '../../lib/signature'
+import { hasSignatureContent, type Signature } from '../../lib/signature'
 import { SignatureDialog } from '../signature/SignatureDialog'
 import { SignatureMark } from '../signature/SignatureMark'
 import { fieldClass, hintClass, wideFieldClass } from './styles'
@@ -16,6 +16,10 @@ interface SignatureInputProps {
 export function SignatureInput({ label, value, defaultText, onChange }: SignatureInputProps) {
   const [isEditing, setIsEditing] = useState(false)
   const open = () => setIsEditing(true)
+  const hasContent = hasSignatureContent(value)
+  const isHidden = !!value.hidden
+  const VisibilityIcon = isHidden ? Eye : EyeOff
+  const visibilityLabel = isHidden ? 'Show on receipt' : 'Hide from receipt'
 
   return (
     <div className={cx(fieldClass, wideFieldClass)}>
@@ -31,26 +35,39 @@ export function SignatureInput({ label, value, defaultText, onChange }: Signatur
         >
           <span className="font-semibold text-brand text-xs">{label}</span>
           <span className="flex min-h-12 flex-1 items-center justify-center overflow-hidden">
-            {isSignatureEmpty(value) ? (
-              <span className={hintClass}>Not set</span>
-            ) : (
+            {hasContent ? (
               <SignatureMark
                 value={value}
                 alt={label}
                 textClassName="text-3xl"
                 imageClassName="max-h-12 max-w-full"
               />
+            ) : (
+              <span className={hintClass}>Not set</span>
             )}
           </span>
         </button>
-        <button
-          type="button"
-          onClick={open}
-          aria-label={`Change ${label.toLowerCase()}`}
-          className="grid size-12 shrink-0 cursor-pointer place-items-center rounded-lg text-brand transition-colors hover:bg-brand-soft"
-        >
-          <Pencil className="size-5" aria-hidden="true" />
-        </button>
+        <div className="flex shrink-0 flex-col gap-1">
+          <button
+            type="button"
+            onClick={open}
+            aria-label={`Change ${label.toLowerCase()}`}
+            title="Edit signature"
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-brand transition-colors hover:bg-brand-soft"
+          >
+            <Pencil className="size-5" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ ...value, hidden: !isHidden })}
+            disabled={!hasContent}
+            aria-label={`${visibilityLabel}: ${label.toLowerCase()}`}
+            title={visibilityLabel}
+            className="grid size-9 cursor-pointer place-items-center rounded-lg text-ink-muted transition-colors hover:not-disabled:bg-brand-soft hover:not-disabled:text-brand disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <VisibilityIcon className="size-5" aria-hidden="true" />
+          </button>
+        </div>
       </div>
       {isEditing && (
         <SignatureDialog
@@ -59,7 +76,7 @@ export function SignatureInput({ label, value, defaultText, onChange }: Signatur
           defaultText={defaultText}
           onClose={() => setIsEditing(false)}
           onApply={(next) => {
-            onChange(next)
+            onChange(isHidden ? { ...next, hidden: true } : next)
             setIsEditing(false)
           }}
         />

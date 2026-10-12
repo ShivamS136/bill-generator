@@ -34,14 +34,18 @@ const IMAGE_SOURCES = ['draw', 'upload', 'url'] as const
 
 export type ImageSource = (typeof IMAGE_SOURCES)[number]
 
-export interface TextSignature {
+interface SignatureBase {
+  hidden?: boolean
+}
+
+export interface TextSignature extends SignatureBase {
   kind: 'text'
   text: string
   font: SignatureFont
   color: string
 }
 
-export interface ImageSignature {
+export interface ImageSignature extends SignatureBase {
   kind: 'image'
   src: string
   source: ImageSource
@@ -70,6 +74,12 @@ const HEX_COLOR = /^#[0-9a-f]{6}$/i
 export function parseSignature(value: unknown, fallback: Signature): Signature {
   if (!value || typeof value !== 'object') return fallback
   const candidate = value as Record<string, unknown>
+  const signature = parseVisibleSignature(candidate)
+  if (!signature) return fallback
+  return candidate.hidden === true ? { ...signature, hidden: true } : signature
+}
+
+function parseVisibleSignature(candidate: Record<string, unknown>): Signature | null {
   if (
     candidate.kind === 'text' &&
     typeof candidate.text === 'string' &&
@@ -86,9 +96,13 @@ export function parseSignature(value: unknown, fallback: Signature): Signature {
   ) {
     return { kind: 'image', src: candidate.src, source: candidate.source as ImageSource }
   }
-  return fallback
+  return null
+}
+
+export function hasSignatureContent(signature: Signature): boolean {
+  return signature.kind === 'text' ? !!signature.text.trim() : isSafeImageSrc(signature.src)
 }
 
 export function isSignatureEmpty(signature: Signature): boolean {
-  return signature.kind === 'text' ? !signature.text.trim() : !isSafeImageSrc(signature.src)
+  return !!signature.hidden || !hasSignatureContent(signature)
 }
