@@ -22,6 +22,7 @@
 
   --spacing-a4-width: 794px;
   --spacing-a4-height: 1123px;
+  --spacing-revenue-stamp-width: 20mm;
   --spacing-sticky-preview: calc(100dvh - 7rem);
 
   --shadow-panel: 0 1px 2px rgb(16 24 22 / 0.06);

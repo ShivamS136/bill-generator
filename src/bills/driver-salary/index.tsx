@@ -287,11 +287,15 @@ export const driverSalaryBill = defineBill<DriverSalaryData>({
         </div>
 
         <h3 className="mt-6 mb-2 font-bold font-montserrat text-xl leading-snug">Revenue Stamp</h3>
-        <div className="relative w-28">
-          <img className="block w-28" src={revenueStamp} alt="Revenue stamp" />
+        <div className="relative w-revenue-stamp-width">
+          <img
+            className="block h-auto w-revenue-stamp-width"
+            src={revenueStamp}
+            alt="Revenue stamp"
+          />
           {!isSignatureEmpty(data.driverSignature) && (
             <Draggable
-              className="absolute top-12 left-12"
+              className="absolute top-9 left-8"
               placement={data.driverSignaturePlacement}
               onPlacementChange={(driverSignaturePlacement) =>
                 onChange({ driverSignaturePlacement })
