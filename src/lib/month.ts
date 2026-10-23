@@ -44,3 +44,13 @@ export function formatMonth(
     year: style === 'long-year' ? 'numeric' : undefined,
   })
 }
+
+// Same day of the month, pulled back to the month's last day when it has fewer days.
+export function addMonths(iso: string, months: number): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
+  if (!match) return iso
+  const [year, month, day] = match.slice(1).map(Number)
+  const lastDay = new Date(year, month - 1 + months + 1, 0).getDate()
+  const date = new Date(year, month - 1 + months, Math.min(day, lastDay))
+  return `${monthKey(date)}-${pad(date.getDate())}`
+}

@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react'
+import type { ExportFormat } from '../lib/export'
 
 export interface BillFormProps<T> {
   data: T
@@ -16,6 +17,13 @@ export interface BillModule<T> {
   Preview: ComponentType<BillPreviewProps<T>>
   fileName?: (data: T) => string
   normalize?: (data: T) => T
+  exportFormat?: (data: T) => ExportFormat
+  previewSize?: PreviewSize
+}
+
+export interface PreviewSize {
+  width: number
+  height: number
 }
 
 export interface BillMeta {

@@ -1,6 +1,6 @@
 # Bill Generator
 
-Frontend-only bill and receipt generator (fuel, rent, driver salary, internet, …) with an inline signature pad and PDF download. Everything runs in the browser; form data is saved to `localStorage`.
+Frontend-only bill and receipt generator (fuel, rent, driver salary, internet, …) with an inline signature pad and PDF or image download. Everything runs in the browser; form data is saved to `localStorage`.
 
 ## Setup
 
@@ -28,7 +28,7 @@ All env files are git-ignored except `.env.example`, which lists every key (all 
 
 The mode decides the rest: `dev` and `build:dev` (mode `development`) show the 🧪 Sample bill and an environment badge; `build` (mode `production`) leaves the sample out of the bundle.
 
-The Pages build sets `VITE_BASE_PATH` and `VITE_GITHUB_REPO` from the repository, and reads the `VITE_DRIVER_SALARY_*` defaults from GitHub repository variables (**Settings → Secrets and variables → Actions → Variables**). Unset variables leave those fields empty.
+The Pages build sets `VITE_BASE_PATH` and `VITE_GITHUB_REPO` from the repository, and reads the `VITE_DRIVER_SALARY_*` defaults from GitHub repository variables (**Settings → Secrets and variables → Actions → Variables**). Unset variables leave those fields empty. The `VITE_FUEL_BILL_*` defaults are only read from your local `.env`.
 
 ## Styling
 
@@ -40,9 +40,11 @@ Inside a `<Paper>`, avoid Tailwind's `translate-*`/`rotate-*`/`scale-*` utilitie
 
 1. Create `src/bills/<bill-id>/index.tsx` exporting `defineBill<YourData>({ initialData, Form, Preview, fileName })`.
    `src/bills/_sample/index.tsx` is a working reference.
-2. Build the form from `src/components/form` (`TextField`, `AmountField`, `SelectField`, `TextAreaField`, `SignatureInput`, `FieldGrid`, `FormSection`).
+2. Build the form from `src/components/form` (`TextField`, `AmountField`, `SelectField`, `TextAreaField`, `ImageField`, `SignatureInput`, `FieldGrid`, `FormSection`).
 3. Render the preview inside one or more `<Paper>` sheets — each sheet is one A4 page in the PDF.
    Render signatures with `SignatureMark` inside `Draggable` to make them movable, resizable and rotatable; `Preview` gets `onChange` to store their placement.
+   For a paper feel, spread `paperBackground(style, seed)` from `src/lib/paper-texture.ts` into the element's `style`. Photo backgrounds from hosts without CORS headers go through images.weserv.nl so the export can read them.
+   To download an image instead of a PDF, mark the element with `EXPORT_IMAGE_ATTR` (from `src/lib/export.ts`), return `'png'` or `'jpeg'` from `exportFormat`, and set `previewSize` to its size in CSS pixels.
    Add `normalize` to validate stored data (e.g. `parseSignature`) when the saved shape may be outdated.
 4. Attach it in `src/bills/registry.ts`: `{ id: '<bill-id>', name, emoji, module: yourBill }`.
 

@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import type { BillEntry, BillModule } from '../bills/types'
-import { usePdfDownload } from '../hooks/usePdfDownload'
+import { useDownload } from '../hooks/useDownload'
 import { usePersistentState } from '../hooks/usePersistentState'
+import type { ExportFormat } from '../lib/export'
 import { Panel } from './Panel'
 import { PreviewPane } from './preview/PreviewPane'
 import { buttonClass, linkClass } from './ui'
@@ -12,14 +13,17 @@ export function BillWorkspace({ bill }: { bill: BillEntry }) {
 }
 
 function ActiveBill<T>({ bill, module }: { bill: BillEntry; module: BillModule<T> }) {
-  const { Form, Preview, initialData, fileName, normalize } = module
+  const { Form, Preview, initialData, fileName, normalize, exportFormat, previewSize } = module
   const [data, setData] = usePersistentState(`bill:${bill.id}`, initialData, normalize)
   const handleChange = useCallback(
     (patch: Partial<T>) => setData((prev) => ({ ...prev, ...patch })),
     [setData],
   )
-  const { pagesRef, isExporting, download } = usePdfDownload(fileName?.(data) ?? bill.id)
-  const downloadButton = <DownloadButton isExporting={isExporting} onClick={download} />
+  const format = exportFormat?.(data) ?? 'pdf'
+  const { pagesRef, isExporting, download } = useDownload(fileName?.(data) ?? bill.id, format)
+  const downloadButton = (
+    <DownloadButton format={format} isExporting={isExporting} onClick={download} />
+  )
 
   return (
     <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
@@ -41,7 +45,7 @@ function ActiveBill<T>({ bill, module }: { bill: BillEntry; module: BillModule<T
         <Form data={data} onChange={handleChange} />
       </Panel>
       <div className="lg:sticky lg:top-22 lg:h-sticky-preview">
-        <PreviewPane pagesRef={pagesRef} actions={downloadButton}>
+        <PreviewPane pagesRef={pagesRef} actions={downloadButton} size={previewSize}>
           <Preview data={data} onChange={handleChange} />
         </PreviewPane>
       </div>
@@ -49,7 +53,13 @@ function ActiveBill<T>({ bill, module }: { bill: BillEntry; module: BillModule<T
   )
 }
 
-function DownloadButton({ isExporting, onClick }: { isExporting: boolean; onClick: () => void }) {
+interface DownloadButtonProps {
+  format: ExportFormat
+  isExporting: boolean
+  onClick: () => void
+}
+
+function DownloadButton({ format, isExporting, onClick }: DownloadButtonProps) {
   return (
     <button
       type="button"
@@ -57,7 +67,7 @@ function DownloadButton({ isExporting, onClick }: { isExporting: boolean; onClic
       onClick={onClick}
       disabled={isExporting}
     >
-      {isExporting ? 'Preparing…' : 'Download PDF'}
+      {isExporting ? 'Preparing…' : `Download ${format.toUpperCase()}`}
     </button>
   )
 }

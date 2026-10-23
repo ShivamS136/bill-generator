@@ -1,3 +1,4 @@
+import { ChevronDown } from 'lucide-react'
 import { type ReactNode, useId } from 'react'
 import { cx } from '../../lib/cx'
 import {
@@ -42,10 +43,11 @@ interface BaseFieldProps {
 }
 
 interface TextFieldProps extends BaseFieldProps {
-  type?: 'text' | 'number' | 'date' | 'month' | 'tel' | 'email'
+  type?: 'text' | 'number' | 'date' | 'time' | 'month' | 'tel' | 'email'
   inputMode?: 'text' | 'numeric' | 'decimal' | 'tel' | 'email'
   min?: number | string
   step?: number | string
+  readOnly?: boolean
 }
 
 export function TextField({
@@ -139,6 +141,36 @@ export function SelectField({
   )
 }
 
+export function RadioField({
+  label,
+  value,
+  onChange,
+  options,
+}: Omit<BaseFieldProps, 'placeholder' | 'required' | 'hint' | 'wide'> & {
+  options: ReadonlyArray<{ value: string; label: string }>
+}) {
+  const name = useId()
+  return (
+    <div className={cx(fieldClass, wideFieldClass)} role="radiogroup" aria-label={label}>
+      <div className="flex flex-wrap gap-x-6 gap-y-2">
+        {options.map((option) => (
+          <label key={option.value} className="flex cursor-pointer items-center gap-2 text-sm">
+            <input
+              type="radio"
+              name={name}
+              className="size-4 accent-brand"
+              value={option.value}
+              checked={value === option.value}
+              onChange={() => onChange(option.value)}
+            />
+            {option.label}
+          </label>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function FieldGrid({ children }: { children: ReactNode }) {
   return <div className="grid grid-cols-1 gap-x-5 gap-y-4 sm:grid-cols-2">{children}</div>
 }
@@ -151,5 +183,20 @@ export function FormSection({ title, children }: { title: string; children: Reac
       </legend>
       {children}
     </fieldset>
+  )
+}
+
+export function AccordionSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <details className="group mb-3 rounded-xl border border-line last:mb-0">
+      <summary className="flex cursor-pointer list-none items-center gap-2.5 px-4 py-3 font-semibold text-xs uppercase tracking-wider before:h-4 before:w-1 before:rounded-sm before:bg-brand before:content-[''] [&::-webkit-details-marker]:hidden">
+        {title}
+        <ChevronDown
+          className="ml-auto size-4 text-ink-muted transition-transform group-open:rotate-180"
+          aria-hidden="true"
+        />
+      </summary>
+      <div className="px-4 pt-1 pb-4">{children}</div>
+    </details>
   )
 }

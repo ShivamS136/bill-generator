@@ -1,12 +1,14 @@
 import { sampleBill } from './_sample'
 import { driverSalaryBill } from './driver-salary'
+import { fuelBill } from './fuel-bill'
+import { internetBill } from './internet-bill'
 import type { BillEntry } from './types'
 
 const catalog: BillEntry[] = [
-  { id: 'fuel-bill', name: 'Fuel Bill', emoji: '⛽' },
+  { id: 'fuel-bill', name: 'Fuel Bill', emoji: '⛽', module: fuelBill },
   { id: 'driver-salary', name: 'Driver Salary', emoji: '🚗', module: driverSalaryBill },
+  { id: 'internet-bill', name: 'Internet Bill', emoji: '🌐', module: internetBill },
   { id: 'rent-receipt', name: 'Rent Receipt', emoji: '🏠' },
-  { id: 'internet-bill', name: 'Internet Bill', emoji: '🌐' },
   { id: 'daily-helper', name: 'Daily Helper', emoji: '🧹' },
   { id: 'restaurant-bill', name: 'Restaurant Bill', emoji: '🍽️' },
   { id: 'medical-bill', name: 'Medical Bill', emoji: '🏥' },

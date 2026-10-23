@@ -19,10 +19,20 @@
   --font-paper: Arial, Helvetica, sans-serif;
   --font-nunito: 'Nunito', Arial, sans-serif;
   --font-montserrat: 'Montserrat', Arial, sans-serif;
+  --font-receipt: 'Press Start 2P', ui-monospace, monospace;
+
+  --text-tag: 0.625rem;
+  --text-tag--line-height: 1;
+
+  --text-receipt: 9.6px;
+  --text-receipt--line-height: 1.35;
+  --text-receipt-symbol: 9px;
+  --text-shadow-thermal: 0.35px 0 0 currentColor;
 
   --spacing-a4-width: 794px;
   --spacing-a4-height: 1123px;
   --spacing-revenue-stamp-width: 20mm;
+  --spacing-thermal-width: 80mm;
   --spacing-sticky-preview: calc(100dvh - 7rem);
 
   --shadow-panel: 0 1px 2px rgb(16 24 22 / 0.06);

@@ -8,7 +8,7 @@ import {
   useState,
 } from 'react'
 import { cx } from '../../lib/cx'
-import { PDF_IGNORE_ATTR, PDF_PAGE_ATTR } from '../../lib/pdf'
+import { PDF_IGNORE_ATTR, PDF_PAGE_ATTR } from '../../lib/export'
 import { PAPER_WIDTH_PX } from './Paper'
 
 export interface Placement {
