@@ -1,4 +1,4 @@
-export const fieldClass = 'grid min-w-0 gap-1.5'
+export const fieldClass = 'grid min-w-0 content-start gap-1.5'
 export const wideFieldClass = 'col-span-full'
 export const labelClass = 'text-sm font-medium'
 export const hintClass = 'text-xs text-ink-muted'

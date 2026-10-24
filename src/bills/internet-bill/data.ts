@@ -6,6 +6,7 @@ import { addToSerial } from '../../lib/serial'
 export interface InternetBillData {
   providerName: string
   providerAddress: string
+  gstNumber: string
   description: string
   accountNumber: string
   billDate: string

@@ -16,6 +16,8 @@ const headerCellClass =
 
 const keep = { [PDF_KEEP_ATTR]: '' }
 
+const GST_CATEGORY = 'TELECOMMUNICATION SERVICE'
+
 const TAX_HEADINGS = [
   'Taxable Amount',
   'CGST Rate%',
@@ -49,8 +51,8 @@ export function Invoice({ data }: { data: InternetBillData }) {
     <Paper flow className="flex flex-col p-5 font-paper text-base/6 text-neutral-900">
       <div className="flex flex-1 flex-col border border-neutral-800 *:shrink-0" style={style}>
         <header className="relative flex items-start font-bold" {...keep}>
-          <p className="absolute top-1 right-2">(Receipt for the Recipient)</p>
-          <div className="w-47 rounded-br-xl bg-white pt-13 pr-1.5 pb-4 pl-6">
+          <p className="absolute top-1 right-2 font-normal">(Receipt for the Recipient)</p>
+          <div className="w-47 shrink-0 rounded-br-xl bg-white pt-13 pr-1.5 pb-4 pl-6">
             {isSafeImageSrc(data.logo) && (
               <img
                 className="mx-auto mb-3 block h-9 max-w-full object-contain"
@@ -62,15 +64,21 @@ export function Invoice({ data }: { data: InternetBillData }) {
             <p>{data.providerName}</p>
             <p className="whitespace-pre-line">{address}</p>
           </div>
-          <div className="mt-22 ml-18 w-50">
-            <p>Name: {data.customerName}</p>
+          <div className="mt-22 ml-8 w-48 shrink-0 font-normal">
+            <Detail label="Name">{data.customerName}</Detail>
             <p className="whitespace-pre-line">{data.customerAddress.trim()}</p>
-            <p>Account Number: {data.accountNumber}</p>
+            <Detail label="Account Number">{data.accountNumber}</Detail>
           </div>
-          <div className="mt-22 mr-7 ml-auto w-50 text-right">
-            <p>Invoice No: {data.invoiceNumber}</p>
-            <p>Account No: {data.accountNumber}</p>
-            <p>Bill Date: {invoiceDate(data.billDate)}</p>
+          <div className="mt-22 mr-7 ml-auto pl-2 text-right font-normal">
+            <Detail label="Invoice No">{data.invoiceNumber}</Detail>
+            <Detail label="Account No">{data.accountNumber}</Detail>
+            <Detail label="Bill Date">{invoiceDate(data.billDate)}</Detail>
+            {data.gstNumber.trim() && (
+              <>
+                <Detail label="GST No">{data.gstNumber.trim()}</Detail>
+                <Detail label="GST Category">{GST_CATEGORY}</Detail>
+              </>
+            )}
           </div>
         </header>
 
@@ -157,6 +165,14 @@ export function Invoice({ data }: { data: InternetBillData }) {
         </section>
       </div>
     </Paper>
+  )
+}
+
+function Detail({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <p>
+      <strong>{label}:</strong> {children}
+    </p>
   )
 }
 

@@ -15,7 +15,7 @@ export function ColorField({ label, value, presets, onChange }: ColorFieldProps)
   const colour = parseHexColour(value)
 
   return (
-    <div className={cx(fieldClass, 'content-start')}>
+    <div className={fieldClass}>
       <label className={labelClass} htmlFor={id}>
         {label}
       </label>

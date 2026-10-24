@@ -74,10 +74,11 @@ export function InternetBillForm({ data, onChange }: BillFormProps<InternetBillD
             onChange={(providerName) => onChange({ providerName })}
           />
           <TextField
-            label="Bill account number"
-            required
-            value={data.accountNumber}
-            onChange={(accountNumber) => onChange({ accountNumber })}
+            label="GST number"
+            placeholder="e.g. 22AAAAA0000A1Z5"
+            hint="Printed with the category Telecommunication Service"
+            value={data.gstNumber}
+            onChange={(gstNumber) => onChange({ gstNumber: gstNumber.toUpperCase() })}
           />
           <TextAreaField
             label="Provider address"
@@ -130,9 +131,14 @@ export function InternetBillForm({ data, onChange }: BillFormProps<InternetBillD
           <TextField
             label="Customer name"
             required
-            wide
             value={data.customerName}
             onChange={(customerName) => onChange({ customerName })}
+          />
+          <TextField
+            label="Bill account number"
+            required
+            value={data.accountNumber}
+            onChange={(accountNumber) => onChange({ accountNumber })}
           />
           <TextAreaField
             label="Customer address"
