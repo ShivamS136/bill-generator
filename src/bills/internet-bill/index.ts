@@ -21,7 +21,7 @@ export const internetBill = defineBill<InternetBillData>({
   initialData: () => ({
     providerName: 'Airtel',
     providerAddress: DEFAULT_ADDRESS,
-    gstNumber: '06AAACB2894G1ZR',
+    gstNumber: env.VITE_INTERNET_BILL_GST_NUMBER ?? '',
     description: '',
     accountNumber: env.VITE_INTERNET_BILL_ACCOUNT_NUMBER ?? '',
     billDate: todayISO(),

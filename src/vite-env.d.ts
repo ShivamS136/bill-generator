@@ -19,6 +19,7 @@ interface ImportMetaEnv {
   readonly VITE_INTERNET_BILL_CUSTOMER_ADDRESS?: string
   readonly VITE_INTERNET_BILL_ACCOUNT_NUMBER?: string
   readonly VITE_INTERNET_BILL_AMOUNT?: string
+  readonly VITE_INTERNET_BILL_GST_NUMBER?: string
 }
 
 interface ImportMeta {
