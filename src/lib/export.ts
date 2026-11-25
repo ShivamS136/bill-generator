@@ -21,7 +21,9 @@ export function pageBreaks(sheet: HTMLElement): number[] {
   const pageHeight = (sheet.offsetWidth * A4_MM.height) / A4_MM.width
   const breaks = [0]
   let start = 0
-  while (sheet.offsetHeight - start > pageHeight - (start ? PAGE_MARGIN_PX : 0)) {
+  // offsetHeight is a whole number of px while pageHeight is fractional (an A4 sheet is 1123px
+  // against 1122.94px), so compare against the rounded-up room or a full page spills onto a second.
+  while (sheet.offsetHeight - start > Math.ceil(pageHeight - (start ? PAGE_MARGIN_PX : 0))) {
     let end = start + pageHeight - PAGE_MARGIN_PX * (start ? 2 : 1)
     for (const block of blocks) {
       if (block.top > start && block.top < end && block.bottom > end) end = block.top
